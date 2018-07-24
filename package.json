@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "engines": {
+    "node": "8.11.1"
+  },
+  "scripts": {
+    "start": "make start",
+    "precommit": "make validate"
+  },
+  "dependencies": {
+    "boom": "7.2.0",
+    "express": "4.16.3",
+    "got": "8.3.0",
+    "winston": "2.4.1",
+    "yandex-dialogs-sdk": "1.4.9"
+  },
+  "devDependencies": {
+    "eslint": "5.2.0",
+    "eslint-config-loris": "9.1.0",
+    "husky": "0.14.3",
+    "supervisor": "0.12.0"
+  }
+}
