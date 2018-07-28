@@ -19,6 +19,9 @@ dev:
 		--watch configs,src \
 		-- src/app.js
 
+.PHONY: test
+test: validate
+
 .PHONY: validate
 validate:
 	npx eslint .
