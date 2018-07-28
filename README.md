@@ -1,4 +1,4 @@
-# yandex-dialogs-witch
+# yandex-dialogs
 
 ## Documentation
 

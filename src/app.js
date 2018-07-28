@@ -8,7 +8,9 @@ const app = express()
     .disable('x-powered-by')
     .get('/ping', (req, res) => res.end())
     .use(express.json())
-    .post('/', witchHandler)
+    .use('/v1', express.Router()
+        .post('/witch', witchHandler)
+    )
     .use((req, res, next) => next(Boom.notFound('Endpoint not found')))
     // eslint-disable-next-line no-unused-vars
     .use((err, req, res, next) => {

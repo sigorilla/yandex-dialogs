@@ -10,8 +10,8 @@ For switching quickly between Node.js version you can use a Node.js version mana
 1. Clone repository
 
   ```
-  git clone git@github.com:sigorilla/yandex-dialogs-witch.git
-  cd yandex-dialogs-witch
+  git clone git@github.com:sigorilla/yandex-dialogs.git
+  cd yandex-dialogs
   ```
 
 2. Install dependencies:
