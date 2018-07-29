@@ -3,7 +3,9 @@ const logger = require('../logger');
 const {witch: config} = require('../config');
 
 class Witch {
-    constructor() {
+    constructor(lang) {
+        this._api = config.api(config.hosts[lang]);
+
         this._step = 0;
         this._stepOfLastResult = this._step;
         this._progression = 0;
@@ -17,7 +19,7 @@ class Witch {
 
     request(path, params) {
         logger.info(`GET ${path} => ${JSON.stringify(params)}`);
-        return got(`${config.host}:${config.port}/ws${path}`, {
+        return got(`${this._api}${path}`, {
             query: params,
             json: true
         }).then((response) => {
