@@ -1,10 +1,13 @@
 const Alice = require('yandex-dialogs-sdk');
 const {itemsListCard} = require('yandex-dialogs-sdk/dist/card');
+const localeMiddleware = require('../middlewares/locale');
 const logger = require('../lib/logger');
 const Witch = require('../lib/providers/witch');
 
 const {button, reply} = Alice;
 const alice = new Alice();
+
+alice.use(localeMiddleware('witch'));
 
 const createReply = (retryText, options = {}) => reply({
     text: retryText ?
@@ -28,34 +31,36 @@ alice.welcome((ctx) => {
 });
 
 alice.command('Не хочу', (ctx) => {
-    ctx.reply(createReply('Хорошо!', {endSession: true}));
+    ctx.reply(createReply(ctx.i18n.t('ok'), {endSession: true}));
 });
 
 // TODO: add matcher for answers without `answerId`.
 
 alice.any(async (ctx) => {
-    logger.info(`payload = ${JSON.stringify(ctx.payload)}`);
-    const {answerId, restart, exclusion, stop} = ctx.payload || {};
+    const {payload, state, i18n} = ctx;
+
+    logger.info(`payload = ${JSON.stringify(payload)}`);
+    const {answerId, restart, exclusion, stop} = payload || {};
     if (stop) {
-        ctx.reply(createReply('Хорошо!', {endSession: true}));
+        ctx.reply(createReply(i18n.t('ok'), {endSession: true}));
         return;
     }
 
-    const witch = ctx.state.witch = ctx.state.witch || new Witch();
+    const witch = state.witch = state.witch || new Witch(i18n.language);
 
     let params;
     try {
         params = await witch.answer(answerId, {restart, exclusion});
     } catch (err) {
         logger.error(`game error ${err}`);
-        ctx.reply(createReply('Произошла ошибка!'));
+        ctx.reply(createReply(i18n.t('error')));
         return;
     }
 
     const {question, answers, error, result} = params || {};
 
     if (error) {
-        ctx.reply(createReply('Произошла ошибка!'));
+        ctx.reply(createReply(i18n.t('error')));
         return;
     }
 
