@@ -9,7 +9,7 @@ class Witch {
         this._signature = undefined;
     }
 
-    _request(path, params) {
+    request(path, params) {
         logger.info(`GET ${path} => ${JSON.stringify(params)}`);
         return got(`${witch.host}:${witch.port}/ws${path}`, {
             query: params,
@@ -20,12 +20,12 @@ class Witch {
         });
     }
 
-    _isStarted() {
+    isStarted() {
         return Boolean(this._session && this._signature);
     }
 
     start() {
-        return this._request('/new_session', {
+        return this.request('/new_session', {
             partner: 1,
             player: 'website-desktop',
             constraint: ''
@@ -40,22 +40,32 @@ class Witch {
             this._session = identification.session;
             this._signature = identification.signature;
 
-            return extractQuestion(step_information);
+            return this._extractAnswers(step_information);
         });
     }
 
-    answer(answerId) {
-        if (!this._isStarted()) {
+    answer(answerId, {exclusion} = {}) {
+        if (!this.isStarted()) {
             logger.warn('answer: starting new session');
             return this.start();
         }
 
-        return this._request('/answer', {
+        const params = {
             session: this._session,
             signature: this._signature,
-            step: this._step,
-            answer: answerId
-        }).then(({body}) => {
+            step: this._step
+        };
+        if (exclusion) {
+            params.forward_answer = -1;
+        } else {
+            params.answer = answerId;
+        }
+
+        const path = exclusion ?
+            '/exclusion' :
+            answerId === -1 ? '/cancel_answer' : '/answer';
+
+        return this.request(path, params).then(({body}) => {
             const {completion, parameters} = body;
             if (completion !== 'OK') {
                 return {error: completion};
@@ -68,17 +78,17 @@ class Witch {
                 return this.getResult();
             }
 
-            return extractQuestion(parameters);
+            return this._extractAnswers(parameters);
         });
     }
 
     getResult() {
-        if (!this._isStarted()) {
+        if (!this.isStarted()) {
             logger.warn('get result: starting new session');
             return this.start();
         }
 
-        return this._request('/list', {
+        return this.request('/list', {
             session: this._session,
             signature: this._signature,
             step: this._step,
@@ -98,17 +108,29 @@ class Witch {
             };
         });
     }
-}
 
-function extractQuestion(parameters) {
-    const {question, answers} = parameters;
-    return {
-        question,
-        answers: answers.map(({answer}, index) => ({
-            id: index,
-            text: answer
-        }))
-    };
+    exclusion() {
+        return this.request('/exclusion', {
+            session: this._session,
+            signature: this._signature,
+            step: this._step,
+            forward_answer: 1
+        });
+    }
+
+    extractAnswers(parameters) {
+        const {question, answers} = parameters;
+        return {
+            question,
+            answers: [
+                ...answers.map(({answer}, index) => ({
+                    id: index,
+                    text: answer
+                })),
+                ...(this._step > 0 ? [{id: -1, text: '⬅️  Исправить'}] : [])
+            ]
+        };
+    }
 }
 
 module.exports = Witch;
