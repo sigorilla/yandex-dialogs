@@ -93,7 +93,7 @@ alice.any(async (ctx) => {
                 {
                     text: '⬅️  Исправить',
                     button: {
-                        payload: {id: -1}
+                        payload: {answerId: -1}
                     }
                 } :
                 undefined
