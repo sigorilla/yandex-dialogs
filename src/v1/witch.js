@@ -79,7 +79,7 @@ alice.any(async (ctx) => {
         text,
         card: itemsListCard({
             header: {
-                title: text
+                text: text
             },
             items: answers.map(({id, text}) => ({
                 title: text,
