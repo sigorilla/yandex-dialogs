@@ -1,5 +1,11 @@
 const production = {
     witch: {
+        consts: {
+            maxQuestions: 79,
+            maxQuestionsFromExclusion: 5,
+            maxProgression: 97,
+            maxQuestionsFromResult: 25
+        },
         port: 9124,
         // @see http://www.jsfuck.com
         // eslint-disable-next-line

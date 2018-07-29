@@ -1,10 +1,12 @@
 const got = require('got');
 const logger = require('../logger');
-const {witch} = require('../config');
+const {witch: config} = require('../config');
 
 class Witch {
     constructor() {
         this._step = 0;
+        this._stepOfLastResult = this._step;
+        this._progression = 0;
         this._session = undefined;
         this._signature = undefined;
     }
@@ -15,7 +17,7 @@ class Witch {
 
     request(path, params) {
         logger.info(`GET ${path} => ${JSON.stringify(params)}`);
-        return got(`${witch.host}:${witch.port}/ws${path}`, {
+        return got(`${config.host}:${config.port}/ws${path}`, {
             query: params,
             json: true
         }).then((response) => {
@@ -77,13 +79,29 @@ class Witch {
 
             const {step, progression} = parameters;
             this._step = Number(step);
+            this._progression = Number(progression);
 
-            if (Number(progression) > 97) {
+            if (this.shouldShowResult()) {
                 return this.getResult();
             }
 
             return this.extractAnswers(parameters);
         });
+    }
+
+    shouldShowResult() {
+        if (this._step === config.consts.maxQuestions) {
+            return true;
+        } else if (this._step - this._stepOfLastResult < config.consts.maxQuestionsFromExclusion) {
+            return false;
+        } else if (
+            this._progression > config.consts.maxProgression ||
+            this._step - this._stepOfLastResult === config.consts.maxQuestionsFromResult
+        ) {
+            return this._step !== 75;
+        } else {
+            return false;
+        }
     }
 
     getResult() {
@@ -92,6 +110,7 @@ class Witch {
             return this.start();
         }
 
+        this._stepOfLastResult = this._step;
         return this.request('/list', {
             session: this._session,
             signature: this._signature,
