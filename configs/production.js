@@ -15,10 +15,6 @@ const production = {
         colorize: false,
         level: 'info',
         timestamp: false
-    },
-    skill: {
-        id: process.env.SKILL_ID,
-        token: process.env.DIALOGS_TOKEN
     }
 };
 

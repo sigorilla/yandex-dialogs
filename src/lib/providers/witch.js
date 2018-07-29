@@ -136,15 +136,6 @@ class Witch {
         });
     }
 
-    exclusion() {
-        return this.request('/exclusion', {
-            session: this._session,
-            signature: this._signature,
-            step: this._step,
-            forward_answer: 1
-        });
-    }
-
     extractAnswers(parameters) {
         const {question, answers} = parameters;
         return {
