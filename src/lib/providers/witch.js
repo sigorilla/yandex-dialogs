@@ -43,6 +43,10 @@ class Witch {
 
             const {identification, step_information} = parameters;
 
+            this._step = 0;
+            this._stepOfLastResult = this._step;
+            this._progression = 0;
+
             this._session = identification.session;
             this._signature = identification.signature;
 

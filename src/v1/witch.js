@@ -77,11 +77,10 @@ alice.any(async (ctx) => {
         return;
     }
 
-    const text = (restart ? 'Начинаем заново!\n\n' : '') +
-        `${witch.step + 1}. ${question}`;
+    const text = `${witch.step + 1}. ${question}`;
     const isFirstStep = witch.step === 0;
     ctx.reply(reply({
-        text,
+        text: (restart ? 'Начинаем заново!\n\n' : '') + text,
         card: itemsListCard({
             header: {text},
             items: answers.map(({id, text}) => ({
