@@ -76,9 +76,9 @@ class Witch {
             }
 
             const {step, progression} = parameters;
-            this._step = step;
+            this._step = Number(step);
 
-            if (progression > 97) {
+            if (Number(progression) > 97) {
                 return this.getResult();
             }
 
