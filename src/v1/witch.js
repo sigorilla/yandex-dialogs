@@ -74,7 +74,8 @@ alice.any(async (ctx) => {
         return;
     }
 
-    const text = (renew ? 'Начинаем заново!\n\n' : '') + question;
+    const text = (renew ? 'Начинаем заново!\n\n' : '') +
+        `${witch.step + 1}. ${question}`;
     const isFirstStep = witch.step === 0;
     ctx.reply(reply({
         text,
