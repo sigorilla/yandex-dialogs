@@ -77,7 +77,7 @@ alice.any(async (ctx) => {
     ctx.reply(reply({
         text: (renew ? 'Начинаем заново!\n\n' : '') + question,
         card: itemsListCard({
-            items: answers.map(({id, text}) => button({
+            items: answers.map(({id, text}) => ({
                 title: text,
                 button: {
                     payload: {answerId: id}
