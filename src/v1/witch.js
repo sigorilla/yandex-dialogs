@@ -75,27 +75,28 @@ alice.any(async (ctx) => {
     }
 
     const text = (renew ? 'Начинаем заново!\n\n' : '') + question;
+    const isFirstStep = witch.step === 0;
     ctx.reply(reply({
         text,
         card: itemsListCard({
-            header: {
-                text: text
-            },
+            header: {text},
             items: answers.map(({id, text}) => ({
                 title: text,
                 description: '',
-                button: button({
-                    title: text,
+                button: {
+                    text,
                     payload: {answerId: id}
-                })
-            }))
-        }),
-        buttons: witch.step > 0 ? [
-            button({
-                title: '⬅️  Исправить',
-                payload: {id: -1}
-            })
-        ] : []
+                }
+            })),
+            footer: !isFirstStep ?
+                {
+                    text: '⬅️  Исправить',
+                    button: {
+                        payload: {id: -1}
+                    }
+                } :
+                undefined
+        })
     }));
 });
 
