@@ -40,7 +40,7 @@ class Witch {
             this._session = identification.session;
             this._signature = identification.signature;
 
-            return this._extractAnswers(step_information);
+            return this.extractAnswers(step_information);
         });
     }
 
@@ -78,7 +78,7 @@ class Witch {
                 return this.getResult();
             }
 
-            return this._extractAnswers(parameters);
+            return this.extractAnswers(parameters);
         });
     }
 
