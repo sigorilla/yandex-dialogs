@@ -48,8 +48,8 @@ class Witch {
         });
     }
 
-    answer(answerId, {exclusion} = {}) {
-        if (!this.isStarted()) {
+    answer(answerId, {restart, exclusion} = {}) {
+        if (!this.isStarted() || restart) {
             logger.warn('answer: starting new session');
             return this.start();
         }
@@ -60,7 +60,7 @@ class Witch {
             step: this._step
         };
         if (exclusion) {
-            params.forward_answer = -1;
+            params.forward_answer = 1;
         } else {
             params.answer = answerId;
         }

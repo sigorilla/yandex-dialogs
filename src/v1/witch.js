@@ -13,7 +13,7 @@ const createReply = (retryText, options = {}) => reply({
     buttons: [
         button({
             title: 'Давай попробуем!',
-            payload: {renew: Boolean(retryText)}
+            payload: {restart: Boolean(retryText)}
         }),
         button({
             title: 'Не хочу',
@@ -31,10 +31,13 @@ alice.command('Не хочу', (ctx) => {
     ctx.reply(createReply('Хорошо!', {endSession: true}));
 });
 
+// TODO: add matcher for answers without `answerId`.
+
 alice.any(async (ctx) => {
     logger.info(`payload = ${JSON.stringify(ctx.payload)}`);
-    const {answerId, renew, exclusion, stop} = ctx.payload || {};
+    const {answerId, restart, exclusion, stop} = ctx.payload || {};
     if (stop) {
+        ctx.reply(createReply('Хорошо!', {endSession: true}));
         return;
     }
 
@@ -42,7 +45,7 @@ alice.any(async (ctx) => {
 
     let params;
     try {
-        params = await witch.answer(answerId, {exclusion});
+        params = await witch.answer(answerId, {restart, exclusion});
     } catch (err) {
         logger.error(`game error ${err}`);
         ctx.reply(createReply('Произошла ошибка!'));
@@ -62,7 +65,7 @@ alice.any(async (ctx) => {
             buttons: [
                 button({
                     title: 'Да!',
-                    payload: {renew: true}
+                    payload: {restart: true}
                 }),
                 button({
                     title: 'Нет...',
@@ -74,7 +77,7 @@ alice.any(async (ctx) => {
         return;
     }
 
-    const text = (renew ? 'Начинаем заново!\n\n' : '') +
+    const text = (restart ? 'Начинаем заново!\n\n' : '') +
         `${witch.step + 1}. ${question}`;
     const isFirstStep = witch.step === 0;
     ctx.reply(reply({
