@@ -74,22 +74,28 @@ alice.any(async (ctx) => {
         return;
     }
 
+    const text = (renew ? 'Начинаем заново!\n\n' : '') + question;
     ctx.reply(reply({
-        text: (renew ? 'Начинаем заново!\n\n' : '') + question,
+        text,
         card: itemsListCard({
+            header: {
+                title: text
+            },
             items: answers.map(({id, text}) => ({
                 title: text,
-                button: {
+                description: '',
+                button: button({
+                    title: text,
                     payload: {answerId: id}
-                }
+                })
             }))
         }),
-        buttons: witch.step > 0 [
+        buttons: witch.step > 0 ? [
             button({
                 title: '⬅️  Исправить',
                 payload: {id: -1}
             })
-        ]
+        ] : []
     }));
 });
 
