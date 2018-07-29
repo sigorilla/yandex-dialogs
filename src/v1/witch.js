@@ -1,4 +1,5 @@
 const Alice = require('yandex-dialogs-sdk');
+const {itemsListCard} = require('yandex-dialogs-sdk/dist/card');
 const logger = require('../lib/logger');
 const Witch = require('../lib/providers/witch');
 
@@ -75,10 +76,20 @@ alice.any(async (ctx) => {
 
     ctx.reply(reply({
         text: (renew ? 'Начинаем заново!\n\n' : '') + question,
-        buttons: answers.map(({id, text}) => button({
-            title: text,
-            payload: {answerId: id}
-        }))
+        card: itemsListCard({
+            items: answers.map(({id, text}) => button({
+                title: text,
+                button: {
+                    payload: {answerId: id}
+                }
+            }))
+        }),
+        buttons: witch.step > 0 [
+            button({
+                title: '⬅️  Исправить',
+                payload: {id: -1}
+            })
+        ]
     }));
 });
 

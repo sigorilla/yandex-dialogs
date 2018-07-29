@@ -9,6 +9,10 @@ class Witch {
         this._signature = undefined;
     }
 
+    get step() {
+        return this._step;
+    }
+
     request(path, params) {
         logger.info(`GET ${path} => ${JSON.stringify(params)}`);
         return got(`${witch.host}:${witch.port}/ws${path}`, {
@@ -122,13 +126,10 @@ class Witch {
         const {question, answers} = parameters;
         return {
             question,
-            answers: [
-                ...answers.map(({answer}, index) => ({
-                    id: index,
-                    text: answer
-                })),
-                ...(this._step > 0 ? [{id: -1, text: '⬅️  Исправить'}] : [])
-            ]
+            answers: answers.map(({answer}, index) => ({
+                id: index,
+                text: answer
+            }))
         };
     }
 }
