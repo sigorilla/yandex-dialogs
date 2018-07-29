@@ -12,7 +12,7 @@ const createReply = (retryText, options = {}) => reply({
     buttons: [
         button({
             title: 'Давай попробуем!',
-            payload: {renew: true}
+            payload: {renew: Boolean(retryText)}
         }),
         button({
             title: 'Не хочу',
